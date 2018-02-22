@@ -70,17 +70,17 @@ class StartPage(tk.Frame):
 		self.configure(background=BACKGROUND_COLOR);
 		
 		hostname_entry = tk.Entry(master = self,
-										  justify = 'center',
-										  bg = BUTTON_COLOR,
-										  fg = TEXT_COLOR);
+					  justify = 'center',
+					  bg = BUTTON_COLOR,
+					  fg = TEXT_COLOR);
 		
 		hostname_entry.insert(0,'www.facebook.com');
 		
 		hostname_entry.place(relx = 0.5,
-								 rely = 0.5,
-								 height = StartPage.HOSTNAME_HEIGHT,
-								 width = StartPage.HOSTNAME_WIDTH,
-								 anchor = tk.CENTER);
+				     rely = 0.5,
+				     height = StartPage.HOSTNAME_HEIGHT,
+				     width = StartPage.HOSTNAME_WIDTH,
+				     anchor = tk.CENTER);
 		
 		parent.style = ttk.Style();
 		
@@ -88,17 +88,16 @@ class StartPage(tk.Frame):
 		parent.style.configure("TButton", background=BACKGROUND_COLOR);
 		
 		graph_button = tk.Button(master=self,
-										text="Visualize RTT",
-										command=lambda: self.__startRTT(hostname_entry),
-										bg = BUTTON_COLOR,
-										fg = TEXT_COLOR);
+					 text="Visualize RTT",
+					 command=lambda: self.__startRTT(hostname_entry),
+					 bg = BUTTON_COLOR,
+					 fg = TEXT_COLOR);
 		
 		graph_button.place(relx = 0.5,
-								 rely = 0.7,
-								 height = BUTTON_HEIGHT,
-								 width = BUTTON_WIDTH,
-								 anchor = tk.CENTER);
-		
+				   rely = 0.7,
+				   height = BUTTON_HEIGHT,
+				   width = BUTTON_WIDTH,
+				   anchor = tk.CENTER);
 		
 	
 	def __startRTT(self, hostname_entry):
