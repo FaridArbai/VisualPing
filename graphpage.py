@@ -3,6 +3,7 @@ import time
 import random
 import numpy as np
 from threading import Thread
+from threading import Lock
 import pingparsing
 import subprocess
 import matplotlib.pyplot as plt
@@ -12,8 +13,7 @@ import math
 from statistics import stdev
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
-
-#from main import StartPage
+import sys
 
 matplotlib.use('TkAgg')
 
@@ -52,6 +52,9 @@ class GraphPage(tk.Frame):
 		self.__canvas = None;
 		self.__mean_bar = None;
 		self.__graph = None;
+		self.__thread = None;
+		self.setLock(Lock());
+		self.setGuiLock(Lock());
 		
 		f = Figure(figsize=(5, 3), facecolor=BACKGROUND_COLOR);
 		vfx = [19, 1];
@@ -92,7 +95,7 @@ class GraphPage(tk.Frame):
 		
 		quit_button = tk.Button(master=self,
 										text='Back',
-										command=lambda: GraphPage.goBack(self),
+										command=lambda: GraphPage.onClick(self),
 										bg = BACKGROUND_COLOR,
 										fg = 'white');
 		
@@ -103,7 +106,8 @@ class GraphPage(tk.Frame):
 		self.__mean_bar = mean_bar;
 		self.setClose(False);
 		self.setGoBack(False);
-	
+		self.__iter = 0;
+		
 	def getCanvas(self):
 		return self.__canvas;
 	
@@ -117,34 +121,57 @@ class GraphPage(tk.Frame):
 		return self.__controller;
 	
 	def getClose(self):
-		return self.__close;
+		with self.getLock():
+			close = self.__close;
+		
+		return close;
 	
 	def setClose(self,close):
-		self.__close = close;
+		with self.getLock():
+			self.__close = close;
+	
+	def getLock(self):
+		return self.__lock;
+	
+	def setLock(self,lock):
+		self.__lock = lock;
+	
+	def getGuiLock(self):
+		return self.__gui_lock;
+	
+	def setGuiLock(self, lock):
+		self.__gui_lock = lock;
 	
 	def getGoBack(self):
-		return self.__go_back;
+		with self.getLock():
+			go_back = self.__go_back;
+		
+		return go_back;
 	
 	def setGoBack(self, go_back):
-		self.__go_back = go_back;
+		with self.getLock():
+			self.__go_back = go_back;
 	
 	
 	def tkraise(self):
 		thread = Thread(target=GraphPage.graphRTT, args=(self,));
 		self.__thread = thread;
-		thread.start();
+		self.__thread.setDaemon(True);
+		self.__thread.start();
 		super(GraphPage, self).tkraise();
 	
 	@staticmethod
-	def goBack(self):
-		self.setGoBack(True);
-		print("Waiting the thread to stop\n");
-		self.__thread.join();
-		print("Thread joined\n");
-		self.getController().showFrame("StartPage");
+	def onClick(frame):
+		frame.setGoBack(True);
+		frame.getController().showFrame("StartPage");
+	
+	@staticmethod
+	def onClosing(frame):
+		frame.setClose(True);
 	
 	def stop(self):
-		stop = (self.getGoBack()) or (self.getClose());
+		stop = ((self.getGoBack()) or (self.getClose()));
+		self.__iter += 1;
 		return stop;
 	
 	@staticmethod
@@ -177,6 +204,8 @@ class GraphPage(tk.Frame):
 		meanbar = frame.getMeanBar();
 		canvas = frame.getCanvas();
 		hostname = frame.getController().getHostname();
+		
+		frame.setGoBack(False);
 		
 		while (frame.stop()==False):
 			received_response, rtt = GraphPage.ping(hostname);
@@ -303,9 +332,10 @@ class GraphPage(tk.Frame):
 					meanbar.set_xticks(x_ticks);
 					meanbar.set_xticklabels(str_ticks);
 					meanbar.set_yticks([]);
-					
+				
+				
 				canvas.show();
-	
+		
 	
 	
 	@staticmethod
@@ -324,44 +354,7 @@ class GraphPage(tk.Frame):
 			rtt = 0.0;
 		
 		return received_response, rtt;
-	
-	
-	
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+
+
+
+

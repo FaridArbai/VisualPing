@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font  as tkfont
+import sys
 
 from graphpage import GraphPage
 
@@ -22,9 +23,11 @@ class GUI(tk.Tk):
 		
 		self.__frames = {};
 		self.__hostname = None;
+		self.__current_frame_name = None;
 		
 		self.minsize(width=FRAME_WIDTH, height=FRAME_HEIGHT);
 		self.configure(background=BACKGROUND_COLOR);
+		self.protocol("WM_DELETE_WINDOW",lambda:GUI.onClosing(self));
 		
 		container = tk.Frame(self);
 		container.pack(side="top", fill="both", expand=True);
@@ -38,11 +41,23 @@ class GUI(tk.Tk):
 			frame.grid(row=0, column=0, sticky="nsew");
 		
 		self.showFrame(StartPage.__name__);
-
+		self.__current_frame_name = StartPage.__name__;
+		
 	def showFrame(self, page_name):
 		frame = self.__getFrame(page_name);
+		self.__current_frame_name = page_name;
 		frame.tkraise();
 		
+	@staticmethod
+	def onClosing(root_frame):
+		current_frame_name = root_frame.__current_frame_name;
+		if (current_frame_name==GraphPage.__name__):
+			current_frame = root_frame.__frames[current_frame_name];
+			GraphPage.onClosing(current_frame);
+			
+		root_frame.destroy();
+		sys.exit();
+			
 	def __getFrame(self, page_name):
 		frames = self.__getFrames();
 		frame = frames[page_name];
@@ -70,17 +85,17 @@ class StartPage(tk.Frame):
 		self.configure(background=BACKGROUND_COLOR);
 		
 		hostname_entry = tk.Entry(master = self,
-					  justify = 'center',
-					  bg = BUTTON_COLOR,
-					  fg = TEXT_COLOR);
+										  justify = 'center',
+										  bg = BUTTON_COLOR,
+										  fg = TEXT_COLOR);
 		
 		hostname_entry.insert(0,'www.facebook.com');
 		
 		hostname_entry.place(relx = 0.5,
-				     rely = 0.5,
-				     height = StartPage.HOSTNAME_HEIGHT,
-				     width = StartPage.HOSTNAME_WIDTH,
-				     anchor = tk.CENTER);
+								 rely = 0.5,
+								 height = StartPage.HOSTNAME_HEIGHT,
+								 width = StartPage.HOSTNAME_WIDTH,
+								 anchor = tk.CENTER);
 		
 		parent.style = ttk.Style();
 		
@@ -88,16 +103,17 @@ class StartPage(tk.Frame):
 		parent.style.configure("TButton", background=BACKGROUND_COLOR);
 		
 		graph_button = tk.Button(master=self,
-					 text="Visualize RTT",
-					 command=lambda: self.__startRTT(hostname_entry),
-					 bg = BUTTON_COLOR,
-					 fg = TEXT_COLOR);
+										text="Visualize RTT",
+										command=lambda: self.__startRTT(hostname_entry),
+										bg = BUTTON_COLOR,
+										fg = TEXT_COLOR);
 		
 		graph_button.place(relx = 0.5,
-				   rely = 0.7,
-				   height = BUTTON_HEIGHT,
-				   width = BUTTON_WIDTH,
-				   anchor = tk.CENTER);
+								 rely = 0.7,
+								 height = BUTTON_HEIGHT,
+								 width = BUTTON_WIDTH,
+								 anchor = tk.CENTER);
+		
 		
 	
 	def __startRTT(self, hostname_entry):
