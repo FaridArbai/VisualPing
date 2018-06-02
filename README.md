@@ -1,2 +1,2 @@
 # VisualRTT
-A real time RTT statistics visualization tool
+A real time ping statistics visualization tool for any reachable server on the Internet.
