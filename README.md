@@ -1,11 +1,15 @@
 # VisualPing
 A real time ping statistics visualization tool for any reachable server on the Internet.
 
-This application is made out of two windows. The first one is intended to get the target
+This application is made out of two windows: an input one and a graphical one.
+
+The first window is intended to get the target
 server on the Internet whose ping metrics are going to be visualized on real time. This
 specification can be done either with a domain name (e.g. www.facebook.com) or with an
 IP address (e.g. 192.168.0.162, useful if you want to troubleshoot networking issues on 
-your private LAN). Once the target has been specified, the app pushes the second window,
+your private LAN).
+
+Once the target has been specified, the app pushes the second window,
 which is the one intended to show real time ping statistics. These statistics are plotted
 in two graphs: a local one and a global one. The local one shows the evolution of the
 ping (round-trip-time) between the server and the client during the last 100 observations
