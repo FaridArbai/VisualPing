@@ -17,7 +17,7 @@ ping (round-trip-time) between the server and the client during the last 100 obs
 the last 5 ping values (slim line) and the log-error between the actual value and the 
 windowed average, making it much easier to understand the graph since noisy observations
 are filtered out. Finally, the global graph shows a colourized interpolation of the scatter 
-plot of all the ping observations, indicating the mean and the percentiles nº 5 and 95.
+plot of all the ping observations, indicating the mean and the percentiles nº 1 and 95.
 
 ### Demo
 ![](./visual_ping.gif)
